@@ -74,19 +74,6 @@ def refine_image(image_path, out_path, offset_to, out_path_is_file=False):
         else:
             refined_image_path = os.path.join(out_path, os.path.basename(image_path))
 
-        #width, height = im.size
-        #max_side = max(width, height)
-
-        #if isinstance(refine_to, str) and refine_to.endswith("%"):
-        #    ratio = float(refine_to[:-1]) / 100.0
-        #else:
-        #    ratio = float(refine_to) / float(max_side)
-
-        #refined_width = int(width * ratio)
-        #refined_height = int(height * ratio)
-
-        #im.thumbnail((refined_width, refined_height), Image.LANCZOS)
-
         driver = ext[1:].upper()
         if driver == 'JPG':
             driver = 'JPEG'
