@@ -74,19 +74,6 @@ def refine_image(image_path, out_path, offset_to, out_path_is_file=False):
         else:
             refined_image_path = os.path.join(out_path, os.path.basename(image_path))
 
-        #width, height = im.size
-        #max_side = max(width, height)
-
-        #if isinstance(refine_to, str) and refine_to.endswith("%"):
-        #    ratio = float(refine_to[:-1]) / 100.0
-        #else:
-        #    ratio = float(refine_to) / float(max_side)
-
-        #refined_width = int(width * ratio)
-        #refined_height = int(height * ratio)
-
-        #im.thumbnail((refined_width, refined_height), Image.LANCZOS)
-
         driver = ext[1:].upper()
         if driver == 'JPG':
             driver = 'JPEG'
@@ -103,7 +90,7 @@ def refine_image(image_path, out_path, offset_to, out_path_is_file=False):
             new_tuple = (abs(altituple[0]), altituple[1])
             exif_dict['GPS'][piexif.GPSIFD.GPSAltitude] = new_tuple
             exif_dict['GPS'][piexif.GPSIFD.GPSAltitudeRef] = altituple[2]
-            print("Calculated new altitude for ", refined_image_path)
+            print("Calculated new altitude for", refined_image_path)
             im.save(refined_image_path, driver, exif=piexif.dump(exif_dict), quality=100)
         else:
             im.save(refined_image_path, driver, quality=100)
