@@ -1,6 +1,6 @@
-# Exif Image Resize
+# Exif Image GPS Altitude Refine
 
-Resize Images, Keep Exif Data. Simple. The EXIF width and height attributes will be updated accordingly also.
+Specify offset to altitude for single image or entire directory. Based on [exifimageresize](https://github.com/pierotofy/exifimageresize).
 
 ## Installation
 
@@ -13,8 +13,8 @@ pip install -r requirements.txt
 ## Usage
 
 ```bash
-python resize.py -i images/ -o resized/ 25%
-python resize.py -i images/1.JPG -o resized.JPG 2000
+python refine.py -i images/ -o resized/ 10.1
+python resize.py -i images/1.JPG -o resized.JPG 10.1
 ```
 
 ## License
