@@ -33,7 +33,8 @@ def die(msg):
 class nonloc:
     errors = 0
 
-def calc_new_tuple(input_tuple, offset_to, above_below):
+# Altitude calculator
+def altulator(input_tuple, offset_to, above_below):
     """
     :param input_tuple: tuple from exif
     :param offset_to: offset value
@@ -58,13 +59,6 @@ def calc_new_tuple(input_tuple, offset_to, above_below):
     new_tuple = (abs(new_alt), denominator, is_below)
     return new_tuple
     print(new_tuple) 
-
-#    print(num_div_den)
-#    print(normalized_offset)
-#    print(new_alt)
-#    print(numerator)
-#    print(denominator)
-
 
 def refine_image(image_path, out_path, offset_to, out_path_is_file=False):
     """
@@ -100,38 +94,25 @@ def refine_image(image_path, out_path, offset_to, out_path_is_file=False):
         if 'exif' in im.info:
             exif_dict = piexif.load(im.info['exif'])
 
+            # Assign existing altitude tuple and ref to variables
             altitude_tuple = exif_dict['GPS'][piexif.GPSIFD.GPSAltitude]
             above_below = exif_dict['GPS'][piexif.GPSIFD.GPSAltitudeRef]
 
-            altituple = calc_new_tuple(altitude_tuple, offset_to, above_below)
-            #print(altituple)
+            # Pass altitude, offset, and ref to altitude calculator
+            altituple = altulator(altitude_tuple, offset_to, above_below)
             new_tuple = (abs(altituple[0]), altituple[1])
             exif_dict['GPS'][piexif.GPSIFD.GPSAltitude] = new_tuple
             exif_dict['GPS'][piexif.GPSIFD.GPSAltitudeRef] = altituple[2]
-
+            print("Calculated new altitude for ", refined_image_path)
             im.save(refined_image_path, driver, exif=piexif.dump(exif_dict), quality=100)
         else:
             im.save(refined_image_path, driver, quality=100)
 
         im.close()
 
-        #print("{} ({}x{}) --> {} ({}x{})".format(image_path, width, height, refined_image_path, refined_width, refined_height))
     except (IOError, ValueError) as e:
         print("Error: Cannot refine {}: {}.".format(image_path, str(e)))
         nonloc.errors += 1
-
-
-#if not args.amount.endswith("%"):
-#    args.amount = float(args.amount)
-#    if args.amount <= 0:
-#        die("Invalid amount")
-#else:
-#    try:
-#        if float(args.amount[:-1]) <= 0:
-#            die("Invalid amount")
-#    except:
-#        die("Invalid amount")
-
 
 files = []
 if os.path.isdir(args.input):
