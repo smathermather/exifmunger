@@ -37,19 +37,31 @@ def calc_new_tuple(input_tuple, offset_to, above_below):
     """
     :param input_tuple: tuple from exif
     :param offset_to: offset value
+    :param offset_to: above sea level flag
     """
     numerator = input_tuple[0]
     denominator = input_tuple[1]
-    if above_below == 0:
-        num_div_den = numerator / denominator
-    else:
-        num_div_den = -(numerator / denominator)
+    offset_to_int = round(offset_to * denominator, 0)
 
-    new_alt = num_div_den + offset_to
+    if above_below == 0:
+        num = int(numerator)
+    else:
+        num = int(-numerator)
+
+    new_alt = int(num + offset_to_int)
+
+    if new_alt >= 0:
+        is_below = 0
+    else:
+        is_below = 1
+
+    new_tuple = (abs(new_alt), denominator, is_below)
+    return new_tuple
+    print(new_tuple) 
 
 #    print(num_div_den)
 #    print(normalized_offset)
-    print(new_alt)
+#    print(new_alt)
 #    print(numerator)
 #    print(denominator)
 
@@ -87,19 +99,16 @@ def refine_image(image_path, out_path, offset_to, out_path_is_file=False):
 
         if 'exif' in im.info:
             exif_dict = piexif.load(im.info['exif'])
-#            for ifd_name in exif_dict:
-#                print("\n{0} IFD:".format(ifd_name))
-#                for key in exif_dict[ifd_name]:
-#                    try:
-#                        print(key, exif_dict[ifd_name][key][:10])
-#                    except:
-#                        print(key, exif_dict[ifd_name][key])
 
-            #print((exif_dict['GPS'][piexif.GPSIFD.GPSAltitude])[0])
             altitude_tuple = exif_dict['GPS'][piexif.GPSIFD.GPSAltitude]
             above_below = exif_dict['GPS'][piexif.GPSIFD.GPSAltitudeRef]
-            calc_new_tuple(altitude_tuple, 5, above_below)
-            exif_dict['GPS'][piexif.GPSIFD.GPSAltitude] = (5377, 1000)
+
+            altituple = calc_new_tuple(altitude_tuple, offset_to, above_below)
+            #print(altituple)
+            new_tuple = (abs(altituple[0]), altituple[1])
+            exif_dict['GPS'][piexif.GPSIFD.GPSAltitude] = new_tuple
+            exif_dict['GPS'][piexif.GPSIFD.GPSAltitudeRef] = altituple[2]
+
             im.save(refined_image_path, driver, exif=piexif.dump(exif_dict), quality=100)
         else:
             im.save(refined_image_path, driver, quality=100)
