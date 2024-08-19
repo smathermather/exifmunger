@@ -90,7 +90,7 @@ def refine_image(image_path, out_path, offset_to, out_path_is_file=False):
             new_tuple = (abs(altituple[0]), altituple[1])
             exif_dict['GPS'][piexif.GPSIFD.GPSAltitude] = new_tuple
             exif_dict['GPS'][piexif.GPSIFD.GPSAltitudeRef] = altituple[2]
-            print("Calculated new altitude for ", refined_image_path)
+            print("Calculated new altitude for", refined_image_path)
             im.save(refined_image_path, driver, exif=piexif.dump(exif_dict), quality=100)
         else:
             im.save(refined_image_path, driver, quality=100)
